@@ -1,13 +1,12 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django import forms
 
 class SignUpForm(UserCreationForm):
-    username = forms.CharField(label='Имя пользователя', max_length=30, help_text='Представьтесь (до 30 знаков).')
     email = forms.EmailField(label='Email', max_length=254, help_text='Введите действующий email.')
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('username', 'email', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
