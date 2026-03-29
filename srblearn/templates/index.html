@@ -1,21 +1,19 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Главная страница</title>
-</head>
-<body>
-    <h1>Добро пожаловать!</h1>
+<!-- templates/index.html -->
+{% extends 'base.html' %}
 
-    {% if user.is_authenticated %}
-        <p>Привет, {{ user.username }}! <a href="{% url 'logout' %}">Выйти</a></p>
-    {% else %}
-        <p>
-            <a href="{% url 'signup' %}">Регистрация</a> |
-            <a href="{% url 'login' %}">Вход</a>
-        </p>
-    {% endif %}
+{% block title %}Главная{% endblock %}
 
-    <!-- Остальное содержимое страницы -->
-</body>
-</html>
+{% block content %}
+<div class="row">
+    <div class="col s12 center-align">
+        <h2>Добро пожаловать в Lingoduo!</h2>
+        {% if user.is_authenticated %}
+            <p>Привет, {{ user.username }}!</p>
+            <p>Ты можешь <a href="{% url 'words_adding' %}">добавить новое слово</a> или просмотреть все слова.</p>
+            <a href="{% url 'logout' %}">Выйти</a>
+        {% else %}
+            <p>Пожалуйста, <a href="{% url 'login' %}">войдите</a> или <a href="{% url 'signup' %}">зарегистрируйтесь</a>, чтобы начать.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,17 +1,70 @@
 <!-- templates/registration/signup.html -->
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Регистрация</title>
-</head>
-<body>
-    <h2>Регистрация</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Зарегистрироваться</button>
-    </form>
+{% extends 'base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col s12 m6 offset-m3">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title center-align">Регистрация</span>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">person</i>
+                        {{ form.username }}
+                        <!-- noinspection HtmlUnknownTarget -->
+                        <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">{{ form.username.help_text }}</span>
+                        {{ form.username.errors }}
+                    </div>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">email</i>
+                        {{ form.email }}
+                        <!-- noinspection HtmlUnknownTarget -->
+                        <label for="{{ form.email.id_for_label }}">Email</label>
+                        <span class="helper-text">{{ form.email.help_text }}</span>
+                        {{ form.email.errors }}
+                    </div>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">lock</i>
+                        {{ form.password1 }}
+                        <!-- noinspection HtmlUnknownTarget -->
+                        <label for="{{ form.password1.id_for_label }}">Пароль</label>
+                        <span class="helper-text">{{ form.password1.help_text }}</span>
+                        {{ form.password1.errors }}
+                    </div>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">lock_outline</i>
+                        {{ form.password2 }}
+                        <!-- noinspection HtmlUnknownTarget -->
+                        <label for="{{ form.password2.id_for_label }}">Подтверждение пароля</label>
+                        <span class="helper-text">{{ form.password2.help_text }}</span>
+                        {{ form.password2.errors }}
+                    </div>
+
+                    <div class="center-align">
+                        <button class="btn waves-effect waves-light" type="submit">
+                            Зарегистрироваться
+                            <i class="material-icons right">done</i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-action center-align">
+                <a href="{% url 'login' %}">Уже есть аккаунт? Войдите</a>
+                <br>
+                <a href="{% url 'index' %}">← На главную</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
     <!-- Кнопка возврата на главную -->
     <p>

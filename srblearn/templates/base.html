@@ -1,0 +1,54 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Lingoduo{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav>
+        <div class="nav-wrapper container">
+            <a href="{% url 'index' %}" class="brand-logo">Словарь</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'words_adding' %}">Добавить слово</a></li>
+                    <li><a href="{% url 'logout' %}">Выйти</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Вход</a></li>
+                    <li><a href="{% url 'signup' %}">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Local JS -->
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- Pop-up notifications -->
+    {% if messages %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                {% for message in messages %}
+                    M.toast({
+                        html: '{{ message|escapejs }}',
+                        classes: '{% if message.tags == "error" %}red{% else %}green{% endif %}',
+                        displayLength: 5000
+                    });
+                {% endfor %}
+            });
+        </script>
+    {% endif %}
+</body>
+</html>

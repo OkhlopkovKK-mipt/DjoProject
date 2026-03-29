@@ -1,0 +1,56 @@
+<!-- templates/words_adding.html -->
+{% extends 'base.html' %}
+
+{% block title %}Добавить слово{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col s12 m8 offset-m2">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Добавить новое слово</span>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">language</i>
+                        {{ form.original }}
+                        <!-- noinspection HtmlUnknownTarget -->
+                        <label for="{{ form.original.id_for_label }}">Сербское слово</label>
+                        {{ form.original.errors }}
+                    </div>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix">translate</i>
+                        {{ form.translation }}
+                        <!-- noinspection HtmlUnknownTarget -->
+                        <label for="{{ form.translation.id_for_label }}">Перевод</label>
+                        {{ form.translation.errors }}
+                    </div>
+
+                    <div class="file-field input-field">
+                        <div class="btn">
+                            <span>Картинка</span>
+                            {{ form.image }}
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Выберите изображение (необязательно)">
+                        </div>
+                        {{ form.image.errors }}
+                    </div>
+
+                    <div class="center-align">
+                        <button class="btn waves-effect waves-light" type="submit">
+                            Добавить
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-action">
+                <a href="{% url 'index' %}">← На главную</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
