@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import SignUpForm, LoginForm, WordAddForm
 from .models import WordsData, WordTranslation
+from django.contrib.auth import get_user_model
+from django.db.models import Prefetch
 # from django.http import HttpResponse
 
 def index(request):
@@ -58,7 +60,8 @@ def words_adding_view(request):
             # Проверяем, существует ли перевод
             translation_exists = WordTranslation.objects.filter(word=word, translated=translation).exists()
             if translation_exists:
-                messages.error(request, f'Слово "{original}" с переводом "{translation}" уже существует.')
+                messages.error(request, f'Слово "{original}" с переводом "{translation}" уже существует,'
+                                        f'меняется только картинка.')
             else:
                 # Добавляем новый перевод
                 WordTranslation.objects.create(word=word, translated=translation)
@@ -67,3 +70,11 @@ def words_adding_view(request):
     else:
         form = WordAddForm()
     return render(request, 'words_adding.html', {'form': form})
+
+def words_list_view(request):
+    words = WordsData.objects.prefetch_related('wordtranslation_set').all()
+
+    context = {
+        'words': words,
+    }
+    return render(request, 'words_list.html', context)

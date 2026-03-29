@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 from django import forms
+from django.core.validators import RegexValidator
 from .models import WordsData, WordTranslation
 
 class SignUpForm(UserCreationForm):
@@ -25,11 +26,25 @@ class WordAddForm(forms.Form):
     original = forms.CharField(
         label='Сербское слово',
         max_length=255,
+        validators=[
+            RegexValidator(
+                regex=r'^[\p{L}\-]+$',
+                message='Слово должно содержать только буквы и дефис.',
+                code='invalid_word'
+            )
+        ],
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     translation = forms.CharField(
         label='Перевод',
         max_length=255,
+        validators=[
+            RegexValidator(
+                regex=r'^[\p{L}\-]+$',
+                message='Слово должно содержать только буквы и дефис.',
+                code='invalid_word'
+            )
+        ],
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     image = forms.ImageField(
