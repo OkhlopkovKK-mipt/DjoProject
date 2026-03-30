@@ -11,7 +11,7 @@
             Квиз
         </h2>
 
-        <!-- Кнопка назад -->
+        <!-- Back button -->
         <div class="row">
             <div class="col s6">
                 <a href="{% url 'index' %}" class="btn-flat waves-effect">
@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <!-- Сообщения (успех/ошибка) -->
+        <!-- Messages (success/fail) -->
         {% if messages %}
             {% for message in messages %}
                 <div class="card-panel {% if message.tags == 'error' %}red lighten-4 red-text{% else %}green lighten-4 green-text{% endif %}">
@@ -29,15 +29,15 @@
             {% endfor %}
         {% endif %}
 
-        <!-- Карточка квиза -->
+        <!-- Quiz card -->
         <div class="card">
             <div class="card-content">
-                <!-- Сербское слово -->
+                <!-- Serbian word -->
                 <div class="center-align" style="margin-bottom: 20px;">
                     <h4 class="blue-text text-darken-2">{{ word.original }}</h4>
                 </div>
 
-                <!-- Форма ввода ответа -->
+                <!-- Answer form -->
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="word_id" value="{{ word.word_id }}">
@@ -57,7 +57,7 @@
                     </div>
                 </form>
 
-                <!-- Статистика -->
+                <!-- Statistics -->
                 <div class="divider" style="margin: 20px 0;"></div>
 
                 <div class="row center-align">
@@ -73,7 +73,7 @@
             </div>
         </div>
 
-        <!-- Подсказка -->
+        <!-- Hint -->
         <div class="card-panel blue lighten-5 center-align">
             <p class="blue-text text-darken-2">
                 <i class="material-icons tiny">info</i>
@@ -83,19 +83,7 @@
     </div>
 </div>
 
-<!-- Стили -->
-<style>
-    #answer {
-        font-size: 1.2rem;
-        text-align: center;
-    }
-
-    .input-field label {
-        left: 0;
-    }
-</style>
-
-<!-- Авто-фокус на поле ввода -->
+<!-- Auto-focus on the input field -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('answer').focus();

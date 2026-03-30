@@ -8,7 +8,7 @@
     <div class="col s12 m10 offset-m1">
         <h2 class="center-align">Словарь</h2>
 
-        <!-- Кнопка назад и добавить новое слово -->
+        <!-- Back button and button to words adding page -->
         <div class="row">
             <div class="col s6">
                 <a href="{% url 'index' %}" class="btn-flat waves-effect">
@@ -24,13 +24,13 @@
             {% endif %}
         </div>
 
-        <!-- Список слов -->
+        <!-- Words list -->
         {% if words %}
             <div class="row">
                 {% for word in words %}
                     <div class="col s12 m6 l4">
                         <div class="card hoverable">
-                            <!-- Картинка слова (если есть) -->
+                            <!-- Word image (if exists in db) -->
                             {% if word.image %}
                                 <div class="card-image">
                                     <img src="{{ word.image.url }}" alt="{{ word.original }}">
@@ -38,13 +38,13 @@
                             {% endif %}
 
                             <div class="card-content">
-                                <!-- Сербское слово -->
+                                <!-- Serbian word -->
                                 <span class="card-title activator grey-text text-darken-4">
                                     <i class="material-icons left">language</i>
                                     {{ word.original }}
                                 </span>
 
-                                <!-- Переводы -->
+                                <!-- Translations -->
                                 <div class="divider"></div>
                                 <h6 class="mt-3">
                                     <i class="material-icons tiny">translate</i>Переводы:
@@ -67,7 +67,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <!-- Если слов нет -->
+            <!-- If there are no words in db -->
             <div class="card-panel teal lighten-5 center-align">
                 <i class="material-icons large grey-text text-lighten-1">inbox</i>
                 <h5 class="grey-text text-lighten-1">Слов пока нет</h5>

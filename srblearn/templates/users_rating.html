@@ -11,7 +11,7 @@
             Рейтинг пользователей
         </h2>
 
-        <!-- Кнопка назад -->
+        <!-- Back button -->
         <div class="row">
             <div class="col s12">
                 <a href="{% url 'index' %}" class="btn-flat waves-effect">
@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <!-- Таблица рейтинга -->
+        <!-- Rating table -->
         {% if top_users %}
             <div class="card">
                 <div class="card-content">
@@ -33,7 +33,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Топ-10 пользователей -->
+                            <!-- Top-5 users -->
                             {% for user in top_users %}
                                 <tr class="{% if user == current_user %}blue lighten-5{% endif %}">
                                     <td>
@@ -63,7 +63,7 @@
                                 </tr>
                             {% endfor %}
 
-                            <!-- 11 строка: текущий пользователь (если не в топ-10) -->
+                            <!-- 6 row: current user (if user is not in top-5) -->
                             {% if not current_user_in_top %}
                                 <tr class="orange lighten-5" style="border-top: 2px dashed #ff9800;">
                                     <td>
@@ -88,7 +88,7 @@
             </div>
 
         {% else %}
-            <!-- Если пользователей нет -->
+            <!-- If there are no users in db -->
             <div class="card-panel teal lighten-5 center-align" style="padding: 50px;">
                 <i class="material-icons large grey-text text-lighten-1" style="font-size: 64px;">leaderboard</i>
                 <h5 class="grey-text text-lighten-1">Рейтинг пока пуст</h5>
