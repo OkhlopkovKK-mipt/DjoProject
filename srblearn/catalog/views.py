@@ -1,18 +1,32 @@
+"""
+Views for the catalog application.
+
+Handles user registration, login, logout, word management,
+rating display, and quiz functionality.
+"""
+
+import random
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from .forms import SignUpForm, LoginForm, WordAddForm
 from .models import WordsData, WordTranslation
-from django.contrib.auth import get_user_model
-import random
-from django.db.models import Prefetch
-# from django.http import HttpResponse
+
 
 def index(request):
+    """Render the main index page."""
     return render(request, 'index.html')
 
+
 def signup_view(request):
+    """
+    Handle user registration.
+
+    GET: Display signup form.
+    POST: Validate form, create user, log in, and redirect to index.
+    """
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -23,7 +37,14 @@ def signup_view(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
+
 def login_view(request):
+    """
+    Handle user login.
+
+    GET: Display login form.
+    POST: Authenticate user and redirect to index.
+    """
     form = LoginForm(data=request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
@@ -35,12 +56,21 @@ def login_view(request):
                 return redirect('index')
     return render(request, 'registration/login.html', {'form': form})
 
+
 def logout_view(request):
+    """Log out the current user and redirect to index."""
     logout(request)
     return redirect('index')
 
+
 @login_required
 def words_adding_view(request):
+    """
+    Handle adding new words and translations.
+
+    GET: Display word addition form.
+    POST: Save word, translation, and optional image.
+    """
     if request.method == 'POST':
         form = WordAddForm(request.POST, request.FILES)
         if form.is_valid():
@@ -59,20 +89,31 @@ def words_adding_view(request):
                 word.save()
 
             # Checking the existence of translation in db
-            translation_exists = WordTranslation.objects.filter(word=word, translated=translation).exists()
+            translation_exists = WordTranslation.objects.filter(
+                word=word, translated=translation
+            ).exists()
+
             if translation_exists:
-                messages.error(request, f'Слово "{original}" с переводом "{translation}" уже существует,'
-                                        f'меняется только картинка.')
+                messages.error(
+                    request,
+                    f'Слово "{original}" с переводом "{translation}" '
+                    f'уже существует, меняется только картинка.'
+                )
             else:
                 # Adding new translation
                 WordTranslation.objects.create(word=word, translated=translation)
-                messages.success(request, f'Слово "{original}" успешно добавлено с переводом "{translation}".')
+                messages.success(
+                    request,
+                    f'Слово "{original}" успешно добавлено с переводом "{translation}".'
+                )
             return redirect('words_adding')
     else:
         form = WordAddForm()
     return render(request, 'words_adding.html', {'form': form})
 
+
 def words_list_view(request):
+    """Display a list of all words with their translations."""
     words = WordsData.objects.prefetch_related('wordtranslation_set').all()
 
     context = {
@@ -83,6 +124,11 @@ def words_list_view(request):
 
 @login_required
 def rating_view(request):
+    """
+    Display user rating.
+
+    Shows top 5 users by answer_rate and the current user's rank.
+    """
     # Top-5 users by answer_rate (descending)
     top_users = get_user_model().objects.order_by('-answer_rate')[:5]
 
@@ -105,6 +151,12 @@ def rating_view(request):
 
 @login_required
 def quiz_view(request):
+    """
+    Quiz logic: show random word, check user translation.
+
+    POST: Validate answer, update user rating, redirect to new word.
+    GET: Display a random word.
+    """
     # Checking for existence of words in db
     all_words = WordsData.objects.all()
 
@@ -130,13 +182,19 @@ def quiz_view(request):
                 # OK +1 point
                 request.user.answer_rate += 1
                 request.user.save()
-                messages.success(request, f'Правильно! +1 балл (Ответ: {correct_translations.first().translated})')
+                messages.success(
+                    request,
+                    f'Правильно! +1 балл (Ответ: {correct_translations.first().translated})'
+                )
             else:
                 # Fail -1 point
                 request.user.answer_rate -= 1
                 request.user.save()
-                messages.error(request,
-                               f'Неправильно! -1 балл (Правильный ответ: {correct_translations.first().translated})')
+                messages.error(
+                    request,
+                    f'Неправильно! -1 балл '
+                    f'(Правильный ответ: {correct_translations.first().translated})'
+                )
 
         # Redirect to the same page (GET request) with a new word
         return redirect('quiz')
