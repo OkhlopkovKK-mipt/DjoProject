@@ -1,0 +1,103 @@
+<!-- templates/users_rating.html -->
+{% extends 'base.html' %}
+
+{% block title %}Рейтинг пользователей{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col s12 m10 offset-m1">
+        <h2 class="center-align">
+            <i class="material-icons">emoji_events</i>
+            Рейтинг пользователей
+        </h2>
+
+        <!-- Кнопка назад -->
+        <div class="row">
+            <div class="col s12">
+                <a href="{% url 'index' %}" class="btn-flat waves-effect">
+                    <i class="material-icons left">arrow_back</i>На главную
+                </a>
+            </div>
+        </div>
+
+        <!-- Таблица рейтинга -->
+        {% if top_users %}
+            <div class="card">
+                <div class="card-content">
+                    <table class="highlight centered">
+                        <thead>
+                            <tr>
+                                <th>Место</th>
+                                <th>Пользователь</th>
+                                <th>Рейтинг</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Топ-10 пользователей -->
+                            {% for user in top_users %}
+                                <tr class="{% if user == current_user %}blue lighten-5{% endif %}">
+                                    <td>
+                                        {% if forloop.counter == 1 %}
+                                            <span class="badge yellow-text text-darken-2" style="font-size: 1.5rem;">🥇</span>
+                                        {% elif forloop.counter == 2 %}
+                                            <span class="badge grey-text text-darken-2" style="font-size: 1.5rem;">🥈</span>
+                                        {% elif forloop.counter == 3 %}
+                                            <span class="badge brown-text text-darken-2" style="font-size: 1.5rem;">🥉</span>
+                                        {% else %}
+                                            <span class="badge grey-text">{{ forloop.counter }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="valign-wrapper" style="justify-content: center;">
+                                            <span class="username">{{ user.username }}</span>
+                                            {% if user == current_user %}
+                                                <span class="badge blue white-text" style="margin-left: 10px;">Вы</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="new badge green" data-badge-caption="">
+                                            {{ user.answer_rate }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            <!-- 11 строка: текущий пользователь (если не в топ-10) -->
+                            {% if not current_user_in_top %}
+                                <tr class="orange lighten-5" style="border-top: 2px dashed #ff9800;">
+                                    <td>
+                                        <span class="badge orange white-text">#{{ current_user_rank }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="valign-wrapper" style="justify-content: center;">
+                                            <span class="username">{{ current_user.username }}</span>
+                                            <span class="badge orange white-text" style="margin-left: 10px;">Вы</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="new badge orange" data-badge-caption="">
+                                            {{ current_user.answer_rate }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        {% else %}
+            <!-- Если пользователей нет -->
+            <div class="card-panel teal lighten-5 center-align" style="padding: 50px;">
+                <i class="material-icons large grey-text text-lighten-1" style="font-size: 64px;">leaderboard</i>
+                <h5 class="grey-text text-lighten-1">Рейтинг пока пуст</h5>
+                <p class="grey-text text-lighten-1">Будьте первым в рейтинге!</p>
+                <a href="{% url 'words_adding' %}" class="btn waves-effect waves-light teal" style="margin-top: 20px;">
+                    <i class="material-icons left">add</i>Добавить слово
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

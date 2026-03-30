@@ -61,6 +61,8 @@
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'words_list' %}">Список слов</a></li>
                     <li><a href="{% url 'words_adding' %}">Добавить слово</a></li>
+                    <li><a href="{% url 'quiz' %}">Квиз</a></li>
+                    <li><a href="{% url 'users_rating' %}">Рейтинг</a></li>
                     <li><a href="{% url 'logout' %}">Выйти</a></li>
                 {% else %}
                     <li><a href="{% url 'words_list' %}">Список слов</a></li>

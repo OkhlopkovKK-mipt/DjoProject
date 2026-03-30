@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import SignUpForm, LoginForm, WordAddForm
 from .models import WordsData, WordTranslation
 from django.contrib.auth import get_user_model
+import random
 from django.db.models import Prefetch
 # from django.http import HttpResponse
 
@@ -78,3 +79,73 @@ def words_list_view(request):
         'words': words,
     }
     return render(request, 'words_list.html', context)
+
+
+@login_required
+def rating_view(request):
+    # Получаем топ-10 пользователей по answer_rate (по убыванию)
+    top_users = get_user_model().objects.order_by('-answer_rate')[:10]
+
+    # Получаем позицию текущего пользователя в общем рейтинге
+    current_user_rank = get_user_model().objects.filter(
+        answer_rate__gt=request.user.answer_rate
+    ).count() + 1
+
+    # Проверяем, входит ли текущий пользователь в топ-10
+    current_user_in_top = request.user in top_users
+
+    context = {
+        'top_users': top_users,
+        'current_user': request.user,
+        'current_user_rank': current_user_rank,
+        'current_user_in_top': current_user_in_top,
+    }
+    return render(request, 'users_rating.html', context)
+
+
+@login_required
+def quiz_view(request):
+    # Проверяем, есть ли слова в базе
+    all_words = WordsData.objects.all()
+
+    if not all_words.exists():
+        messages.warning(request, 'Сначала добавьте слова для прохождения квиза!')
+        return redirect('words_adding')
+
+    # Если пользователь отправил форму (проверка ответа)
+    if request.method == 'POST':
+        word_id = request.POST.get('word_id')
+        user_answer = request.POST.get('answer', '').strip().lower()
+
+        if word_id:
+            # Получаем слово
+            word = get_object_or_404(WordsData, word_id=word_id)
+
+            # Получаем все правильные переводы
+            correct_translations = WordTranslation.objects.filter(word=word)
+            correct_answers = [t.translated.lower().strip() for t in correct_translations]
+
+            # Проверяем ответ
+            if user_answer in correct_answers:
+                # Правильно +1 балл
+                request.user.answer_rate += 1
+                request.user.save()
+                messages.success(request, f'Правильно! +1 балл (Ответ: {correct_translations.first().translated})')
+            else:
+                # Неправильно -1 балл
+                request.user.answer_rate -= 1
+                request.user.save()
+                messages.error(request,
+                               f'Неправильно! -1 балл (Правильный ответ: {correct_translations.first().translated})')
+
+        # Перенаправляем на эту же страницу (GET запрос) с новым словом
+        return redirect('quiz')
+
+    # Если GET запрос — показываем случайное слово
+    random_word = random.choice(list(all_words))
+
+    context = {
+        'word': random_word,
+        'total_words': all_words.count(),
+    }
+    return render(request, 'quiz.html', context)
