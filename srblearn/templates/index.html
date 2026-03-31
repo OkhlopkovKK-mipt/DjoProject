@@ -10,7 +10,8 @@
         <h2>Добро пожаловать в Lingoduo!</h2>
         {% if user.is_authenticated %}
             <p>Привет, {{ user.username }}! Это платформа для изучения сербского языка.</p>
-            <p>Ты можешь <a href="{% url 'words_adding' %}">добавить новое слово</a> или <a href="{% url 'words_list' %}">просмотреть все слова</a>.</p>
+            <p>Ты можешь <a href="{% url 'words_adding' %}">добавить новое слово</a> или <a href="{% url 'words_list' %}">просмотреть все слова</a>,</p>
+            <p>а также <a href="{% url 'quiz' %}">сыграть в квиз</a> и <a href="{% url 'users_rating' %}">сравнить результат с другими</a>.</p>
             <a href="{% url 'logout' %}">Выйти</a>
         {% else %}
             <p>Платформа для изучения сербского языка.
